@@ -1,0 +1,21 @@
+{
+  "name": "growtopia-render-player",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "b": "tsc",
+    "d": "tsc && node dist/index",
+    "s": "node dist/index"
+  },
+  "author": "Leqend",
+  "license": "ISC",
+  "dependencies": {
+    "jimp": "^0.22.8",
+    "sharp": "^0.33.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "typescript": "^5.4.3"
+  }
+}
