@@ -1,47 +1,11 @@
 import sharp from "sharp";
 import { ChangeColorGetBuffer, shadeColor } from "../Utils/Recolor";
-import { ItemData } from "..";
-
-export enum Face {
-    DEFAULT, SMILE
-}
-
-interface DyeTypes {
-    r: number;
-    g: number;
-    b: number
-}
-
-interface CompositeInfo {
-    buffer: Buffer;
-    x: number;
-    y: number;
-    tile: number;
-}
-
-interface BodyParts {
-    skinColor: string;
-    feet: number;
-    shirt: number;
-    hand: number;
-    neck: number;
-    pant: number;
-    hat: number;
-    back: number;
-    hair?: {
-        hair: number;
-        dye: DyeTypes;
-    }
-    face: {
-        face: Face,
-        irisDye?: DyeTypes;
-        scleraDye?: DyeTypes;
-    }
-}
+import { BodyParts, CompositeInfo, Face, Skin } from "./types/Types";
+import { ItemsDatMeta } from "../Utils/ItemsDat/src/Types";
 
 export class Render {
     
-    constructor(private parts: Partial<BodyParts>, private spriteLocation: string, private w_h: number) {
+    constructor(private parts: Partial<BodyParts>, private spriteLocation: string, private itemData: ItemsDatMeta, private w_h: number) {
         if(!this.parts.feet) this.parts.feet = 0;
         if(!this.parts.hand) this.parts.hand = 0;
         if(!this.parts.neck) this.parts.neck = 0;
@@ -50,20 +14,17 @@ export class Render {
         if(!this.parts.hat) this.parts.hat = 0;
         if(!this.parts.back) this.parts.back = 0;
         if(!this.parts.shirt) this.parts.shirt = 0;
+        if(!this.parts.hair?.hair) this.parts.hair!.hair = 0;
 
-        if(!this.parts.face?.irisDye) this.parts.face!.irisDye = { r: 0, g: 0, b: 0 }
-        if(!this.parts.hair) {
-            this.parts.hair = {
-                hair: 0,
-                dye: { r: 0, g: 0, b: 0 }
-            }
-        }
+        if(!this.parts.face?.eyeDrop) this.parts.face!.eyeDrop = { r: 0, g: 0, b: 0 }
+        if(!this.parts.face?.eyeLens) this.parts.face!.eyeLens = { r: 0, g: 0, b: 0 }
+        if(!this.parts.hair?.dye) this.parts.hair!.dye = { r: 0, g: 0, b: 0 };
 
-        if(!this.parts.skinColor) this.parts.skinColor = "#b38977"
+        if(!this.parts.skinColor) this.parts.skinColor = Skin.TONE4
     }
 
     public async getItemInfo(ItemID: number) {
-        return ItemData.items.meta.items[ItemID];
+        return this.itemData.items![ItemID];
     }
 
     private async renderHat(): Promise<CompositeInfo> {
@@ -73,21 +34,21 @@ export class Render {
             buffer: await sharp(this.spriteLocation + `${i_hat.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: i_hat.textureX! * 32, top: i_hat.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).toBuffer(),
             x: this.w_h * 0.5 - 64,
             y: this.w_h * 0.5 - 32,
-            tile: 5,
+            tile: 6,
         }
     }
 
     private async renderHair(): Promise<CompositeInfo> {
         let hair = await this.getItemInfo(this.parts.hair!.hair);
     
-        let hexColor = (1 << 24 | this.parts.hair!.dye.r << 16 | this.parts.hair!.dye.g << 8 | this.parts.hair!.dye.b).toString(16).slice(1);
+        let hexColor = (1 << 24 | this.parts.hair!.dye!.r << 16 | this.parts.hair!.dye!.g << 8 | this.parts.hair!.dye!.b).toString(16).slice(1);
         let render = await sharp(this.spriteLocation + `${hair.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: hair.textureX! * 32, top: hair.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).toBuffer()
 
         return {
             buffer: hexColor == "000000" ? render : await ChangeColorGetBuffer(render, shadeColor(hexColor, 0)),
             x: this.w_h * 0.5 - 64,
             y: this.w_h * 0.5 - 32,
-            tile: 3
+            tile: 5
         }
     }
 
@@ -111,7 +72,7 @@ export class Render {
             buffer: neck,
             x: this.w_h * 0.5 - 32,
             y: this.w_h * 0.5 - 32,
-            tile: 4,
+            tile: 3,
         }
     }
 
@@ -122,7 +83,7 @@ export class Render {
             buffer: await sharp(this.spriteLocation + `${pant.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: pant.textureX! * 32, top: pant.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).toBuffer(),
             x: this.w_h * 0.5 - 32,
             y: this.w_h * 0.5 - 32,
-            tile: 2,
+            tile: 1,
         }
     }
 
@@ -167,6 +128,8 @@ export class Render {
         let back = await sharp(this.spriteLocation + `${i_back.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: i_back.textureX! * 32, top: i_back.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).png().toBuffer();
 
         switch(i_back.id) {
+
+            // auras
             case 4970: case 4972: case 6284: case 8084: case 8024: case 8026:
             case 3114: back = await sharp(this.spriteLocation + `${i_back.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: i_back.textureX! * 32, top: i_back.textureY! * 32 }).resize(96,96, {kernel: sharp.kernel.nearest}).toBuffer(); break;
 
@@ -177,7 +140,7 @@ export class Render {
             buffer: back,
             x: this.w_h * 0.5 - 60,
             y: this.w_h * 0.5 - 48,
-            tile: -3,
+            tile: -2,
         }
     }
 
@@ -195,25 +158,25 @@ export class Render {
 
     private async renderFace(): Promise<CompositeInfo> { // face still broken lol
         let x = 0, y = 0;
-        let irisColor = (1 << 24 | this.parts.face?.irisDye?.r! << 16 | this.parts.face?.irisDye?.g! << 8 | this.parts.face?.irisDye?.b!).toString(16).slice(1);
-        let scleraColor = (1 << 24 | this.parts.face?.scleraDye?.r! << 16 | this.parts.face?.scleraDye?.g! << 8 | this.parts.face?.scleraDye?.b!).toString(16).slice(1);
+        let eyeLens_ = (1 << 24 | this.parts.face?.eyeLens?.r! << 16 | this.parts.face?.eyeLens?.g! << 8 | this.parts.face?.eyeLens?.b!).toString(16).slice(1);
+        let eyeDrop_ = (1 << 24 | this.parts.face?.eyeDrop?.r! << 16 | this.parts.face?.eyeDrop?.g! << 8 | this.parts.face?.eyeDrop?.b!).toString(16).slice(1);
         
-        switch(this.parts.face?.face) {
+        switch(this.parts.face?.expression) {
             case Face.DEFAULT: x = 0, y = 0; break;
             case Face.SMILE: x = 0, y = 1; break;
         }
 
-        let f_back = await sharp(this.spriteLocation + `player_eyes.png`).extract({ width: 32, height: 32, left: x * 32, top: y * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).png().toBuffer();
-        let iris = await sharp(this.spriteLocation + `player_eyes2.png`).extract({ width: 32, height: 32, left: x * 32, top: y * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).png().toBuffer();
+        let eyeDrop = await sharp(this.spriteLocation + `player_eyes.png`).extract({ width: 32, height: 32, left: x * 32, top: y * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).png().toBuffer();
+        let eyeLens = await sharp(this.spriteLocation + `player_eyes2.png`).extract({ width: 32, height: 32, left: x * 32, top: y * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).png().toBuffer();
         let mouth = await sharp(this.spriteLocation + `player_face.png`).extract({ width: 32, height: 32, left: x * 32, top: y * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).png().toBuffer();
         let eyelid = await sharp(this.spriteLocation + `player_eyes.png`).extract({ width: 32, height: 32, left: 0 * 32, top: 4 * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).png().toBuffer();
 
         let end = await sharp({create: { width: this.w_h, height: this.w_h, channels: 4, background: {r: 0, g: 0, b: 0, alpha: 0} }})
         .composite([
-            {input: await ChangeColorGetBuffer(f_back, scleraColor, 80), top: 0, left: 0},
+            {input: eyeDrop_ == "000000" ? eyeDrop : await ChangeColorGetBuffer(eyeDrop, eyeDrop_, 80), top: 0, left: 0},
             {input: await ChangeColorGetBuffer(eyelid, shadeColor(`${this.parts.skinColor}`, 2)), top: 0, left: 0},
             {input: await ChangeColorGetBuffer(mouth, shadeColor(`${this.parts.skinColor}`, -80)), top: 0, left: 0},
-            {input: await ChangeColorGetBuffer(iris, irisColor, 80), top: 0, left: 0},
+            {input: eyeLens_ == "000000" ? eyeLens : await ChangeColorGetBuffer(eyeLens, eyeLens_, 80), top: 0, left: 0},
         ]).png().toBuffer();
 
         
@@ -239,7 +202,7 @@ export class Render {
 
         // array body
         const extra: CompositeInfo = { buffer: await ChangeColorGetBuffer(extraLeg, this.parts.skinColor), x: this.w_h * 0.5 + 24, y: this.w_h * 0.5 - 16, tile: 0};
-        const l_arm: CompositeInfo = { buffer: await ChangeColorGetBuffer(arm, this.parts.skinColor), x: this.w_h * 0.5 + 4, y: this.w_h * 0.5 - 20, tile: 5}
+        const l_arm: CompositeInfo = { buffer: await ChangeColorGetBuffer(arm, this.parts.skinColor), x: this.w_h * 0.5 + 4, y: this.w_h * 0.5 - 20, tile: 6}
         const r_arm: CompositeInfo = { buffer: await ChangeColorGetBuffer(arm, this.parts.skinColor), x: this.w_h * 0.5 + 4, y: this.w_h * 0.5 + 10, tile: -1}
         const body: CompositeInfo = { buffer: await ChangeColorGetBuffer(r_body, this.parts.skinColor), x: this.w_h * 0.5 - 32, y: this.w_h * 0.5 - 32, tile: 0 }
         const ren_r_f: CompositeInfo = { buffer: this.parts.feet != 0 ? r_feet : await ChangeColorGetBuffer(r_feet, this.parts.skinColor), x: this.w_h * 0.5 - 32, y: this.w_h * 0.5 - 32, tile: 0}

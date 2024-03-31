@@ -2,11 +2,12 @@
   "name": "growtopia-render-player",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "b": "tsc",
-    "d": "tsc && node dist/index",
-    "s": "node dist/index"
+    "build": "tsc",
+    "dev": "npm run build && node dist/index",
+    "start": "node dist/index",
+    "test": "tsc && node dist/test/index"
   },
   "author": "Leqend",
   "license": "ISC",
