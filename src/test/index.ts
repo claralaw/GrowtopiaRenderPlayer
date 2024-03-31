@@ -1,8 +1,7 @@
 import { readFileSync } from "fs";
 import { Face, Skin } from "../Render/types/Types";
-import { ItemsDat } from "../Utils/ItemsDat";
 import { ItemsDatMeta } from "../Utils/ItemsDat/src/Types";
-import { Render } from "..";
+import { ItemsDat, Render } from "..";
 
 const ItemData = {
     items: {
@@ -30,6 +29,6 @@ const ItemData = {
         skinColor: Skin.TONE12 // or you can use hex colors "#da78e3"
     }, "./Assets/sprites/", ItemData.items.meta, 128);
 
-    (await renderPlayer.renderPlayer()).png().toFile("render.png")
+    (await renderPlayer.renderPlayer())
     console.timeEnd("Render")
 })()
