@@ -24,7 +24,7 @@ To convert .rttex files to .png you can use
 
 [Cernodile's Converter](https://tools.cernodile.com/rttex.html)
 
-[Nenaki's Converter](https://github.com/Nenkai/RTPackConverter/releases) (Recommend)
+[Nenkai's Converter](https://github.com/Nenkai/RTPackConverter/releases) (Recommend)
 
 ## Body parts and Expressions
 - [Expressions](https://github.com/FakeLeq/GTools/blob/03b4ed08cbac1a3812c91d78095a369913301df7/src/Render/types/Types.ts#L1)
