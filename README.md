@@ -3,6 +3,7 @@ With Growtopia Tools you can make custom sets
 
 Some items are broken need to configure it.
 
+![img](https://github.com/FakeLeq/GTools/blob/main/img/render.png?raw=true)
 
 ## Assets
 For rendering your player, you need some assets (items.dat and item sprites)
