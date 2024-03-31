@@ -3,6 +3,10 @@ With Growtopia Tools you can make custom sets
 
 Some items are broken need to configure it.
 
+## Install
+```
+npm install growtopia-tools
+```
 
 ## Assets
 For rendering your player, you need some assets (items.dat and item sprites)

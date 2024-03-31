@@ -11,6 +11,7 @@ export class Render {
         if(!this.parts.neck) this.parts.neck = 0;
         if(!this.parts.pant) this.parts.pant = 0;
         if(!this.parts.back) this.parts.back = 0;
+        if(!this.parts.face?.face) this.parts.face!.face = 0;
         if(!this.parts.hat) this.parts.hat = 0;
         if(!this.parts.back) this.parts.back = 0;
         if(!this.parts.shirt) this.parts.shirt = 0;
@@ -124,23 +125,34 @@ export class Render {
 
     private async renderBack(): Promise<CompositeInfo> {
         let i_back = await this.getItemInfo(this.parts.back!)
-        let x, y;
+        let x = this.w_h * 0.5 - 32, y = this.w_h * 0.5 - 32;
         let back = await sharp(this.spriteLocation + `${i_back.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: i_back.textureX! * 32, top: i_back.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).png().toBuffer();
 
         switch(i_back.id) {
 
             // auras
             case 4970: case 4972: case 6284: case 8084: case 8024: case 8026:
-            case 3114: back = await sharp(this.spriteLocation + `${i_back.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: i_back.textureX! * 32, top: i_back.textureY! * 32 }).resize(96,96, {kernel: sharp.kernel.nearest}).toBuffer(); break;
+            case 3114: back = await sharp(this.spriteLocation + `${i_back.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: i_back.textureX! * 32, top: i_back.textureY! * 32 }).resize(104, 104, {kernel: sharp.kernel.nearest}).toBuffer(); x = this.w_h * 0.5 - 68; y = this.w_h * 0.5 - 52; break;
 
             default: back;
         }
 
         return {
             buffer: back,
-            x: this.w_h * 0.5 - 60,
-            y: this.w_h * 0.5 - 48,
+            x: x,
+            y: y,
             tile: -2,
+        }
+    }
+
+    private async renderFace(): Promise<CompositeInfo> {
+        let i_face = await this.getItemInfo(this.parts.face!.face);
+
+        return {
+            buffer: await sharp(this.spriteLocation + `${i_face.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: i_face.textureX! * 32, top: i_face.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).toBuffer(),
+            x: this.w_h * 0.5 - 32,
+            y: this.w_h * 0.5 - 32,
+            tile: 4,
         }
     }
 
@@ -156,7 +168,7 @@ export class Render {
         }
     }
 
-    private async renderFace(): Promise<CompositeInfo> { // face still broken lol
+    private async renderExpression(): Promise<CompositeInfo> { // face still broken lol
         let x = 0, y = 0;
         let eyeLens_ = (1 << 24 | this.parts.face?.eyeLens?.r! << 16 | this.parts.face?.eyeLens?.g! << 8 | this.parts.face?.eyeLens?.b!).toString(16).slice(1);
         let eyeDrop_ = (1 << 24 | this.parts.face?.eyeDrop?.r! << 16 | this.parts.face?.eyeDrop?.g! << 8 | this.parts.face?.eyeDrop?.b!).toString(16).slice(1);
@@ -209,7 +221,7 @@ export class Render {
         const ren_l_f: CompositeInfo = { buffer: this.parts.feet != 0 ? l_feet : await ChangeColorGetBuffer(l_feet, this.parts.skinColor), x: this.w_h * 0.5 - 32, y: this.w_h * 0.5 - 32, tile: 0 }
         
         arr.push(extra, l_arm, r_arm, body, ren_l_f, ren_r_f)
-        arr.push(await this.renderFace())
+        arr.push(await this.renderExpression())
         // array body end
 
         if(this.parts.shirt != 0) { arr.push(await this.renderShirt())}
@@ -219,6 +231,7 @@ export class Render {
         if(this.parts.pant != 0) { arr.push(await this.renderPant()) }
         if(this.parts.hat != 0) { arr.push(await this.renderHat()) }
         if(this.parts.back != 0) { arr.push(await this.renderBack()) }
+        if(this.parts.face?.face != 0) { arr.push(await this.renderFace()) }
         if([3360, 3362, 3364, 3366, 3368, 3370].includes(this.parts.shirt!)) { arr.push(await this.renderVest()) }
 
         arr.sort((x, y) => x.tile - y.tile); // sort arr list for tile 

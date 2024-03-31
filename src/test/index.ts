@@ -16,17 +16,23 @@ const ItemData = {
 
     console.time("Render");
     const renderPlayer = new Render({
-        back: 6284,
-        hand: 1804,
+        back: 8024,
+        hand: 1438,
+        hat: 4820,
+        shirt: 3370,
+        neck: 3372,
+        feet: 496,
+        pant: 370,
         face: {
+            face: 1204,
             expression: Face.DEFAULT,
             eyeLens: { r: 0, g: 193, b: 193 },
         },
         hair: {
            hair: 270,
-           dye: { r: 170, g: 0, b: 0 }
+           dye: { r: 255, g: 0, b: 0 }
         },
-        skinColor: Skin.TONE12
+        skinColor: Skin.TONE3
     }, "./Assets/sprites/", ItemData.items.meta, 128);
 
     const a = (await renderPlayer.renderPlayer())

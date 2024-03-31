@@ -29,6 +29,7 @@ export interface BodyParts {
         dye?: DyeTypes;
     }
     face: {
+        face: number;
         expression: Face,
         eyeLens?: DyeTypes;
         eyeDrop?: DyeTypes;
