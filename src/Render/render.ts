@@ -1,7 +1,7 @@
 import sharp from "sharp";
 import { ChangeColorGetBuffer, shadeColor } from "../Utils/Recolor";
 import { BodyParts, CompositeInfo, Face, Skin } from "./types/Types";
-import { ItemsDatMeta } from "../Utils/ItemsDat/src/Types";
+import { ItemsDatMeta } from "../Utils/ItemsDat/Types";
 
 export class Render {
     
@@ -175,7 +175,7 @@ export class Render {
         .composite([
             {input: eyeDrop_ == "000000" ? eyeDrop : await ChangeColorGetBuffer(eyeDrop, eyeDrop_, 80), top: 0, left: 0},
             {input: await ChangeColorGetBuffer(eyelid, shadeColor(`${this.parts.skinColor}`, 2)), top: 0, left: 0},
-            {input: await ChangeColorGetBuffer(mouth, shadeColor(`${this.parts.skinColor}`, -80)), top: 0, left: 0},
+            {input: this.parts.face?.expression == (Face.SMILE) ? mouth : await ChangeColorGetBuffer(mouth, shadeColor(`${this.parts.skinColor}`, -80)), top: 0, left: 0},
             {input: eyeLens_ == "000000" ? eyeLens : await ChangeColorGetBuffer(eyeLens, eyeLens_, 80), top: 0, left: 0},
         ]).png().toBuffer();
 

@@ -1,7 +1,8 @@
-import { readFileSync } from "fs";
+import { readFileSync, writeFileSync } from "fs";
 import { Face, Skin } from "../Render/types/Types";
-import { ItemsDatMeta } from "../Utils/ItemsDat/src/Types";
+import { ItemsDatMeta } from "../Utils/ItemsDat/Types";
 import { ItemsDat, Render } from "..";
+import { shadeColor } from "../Utils/Recolor";
 
 const ItemData = {
     items: {
@@ -23,12 +24,13 @@ const ItemData = {
         },
         hair: {
            hair: 270,
-           dye: { r: 255, g: 0, b: 0 }
+           dye: { r: 170, g: 0, b: 0 }
         },
-        hat: 9416,
-        skinColor: Skin.TONE12 // or you can use hex colors "#da78e3"
+        skinColor: Skin.TONE12
     }, "./Assets/sprites/", ItemData.items.meta, 128);
 
-    (await renderPlayer.renderPlayer())
+    const a = (await renderPlayer.renderPlayer())
+    writeFileSync("render1.png", a)
+
     console.timeEnd("Render")
 })()
