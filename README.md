@@ -5,6 +5,11 @@ Some items are broken need to configure it.
 
 ![img](https://github.com/FakeLeq/GTools/blob/main/img/render.png?raw=true)
 
+## Installing
+```
+npm i growtopia-tools
+```
+
 ## Assets
 For rendering your player, you need some assets (items.dat and item sprites)
 [Here example assets folder](https://github.com/FakeLeq/GTools/releases/tag/Example)
