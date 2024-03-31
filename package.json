@@ -1,16 +1,21 @@
 {
-  "name": "growtopia-render-player",
+  "name": "growtopia-render",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "dev": "npm run build && node dist/index",
+    "dev": "tsc && node dist/index",
     "start": "node dist/index",
     "test": "tsc && node dist/test/index"
   },
+  "homepage": "https://github.com/FakeLeq/GrowtopiaRenderPlayer#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FakeLeq/GrowtopiaRenderPlayer.git"
+  },
   "author": "Leqend",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "jimp": "^0.22.8",
     "sharp": "^0.33.3"
