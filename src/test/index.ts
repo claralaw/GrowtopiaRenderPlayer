@@ -2,7 +2,6 @@ import { readFileSync, writeFileSync } from "fs";
 import { Face, Skin } from "../Render/types/Types";
 import { ItemsDatMeta } from "../Utils/ItemsDat/Types";
 import { ItemsDat, Render } from "..";
-import { shadeColor } from "../Utils/Recolor";
 
 const ItemData = {
     items: {
@@ -16,7 +15,7 @@ const ItemData = {
 
     console.time("Render");
     const renderPlayer = new Render({
-        back: 8024,
+        /*back: 8024,
         hand: 1438,
         hat: 4820,
         shirt: 3370,
@@ -24,15 +23,21 @@ const ItemData = {
         feet: 496,
         pant: 370,
         face: {
-            face: 1204,
+            //face: 1204,
             expression: Face.DEFAULT,
             eyeLens: { r: 0, g: 193, b: 193 },
-        },
+        },*/
         hair: {
-           hair: 270,
-           dye: { r: 255, g: 0, b: 0 }
+           hair: 0,
         },
-        skinColor: Skin.TONE3
+        face: {
+            expression: Face.DEFAULT
+        },
+        skin: {
+            skinColor: "#d50cc4",
+            opacity: 0.4,
+            overlay_opac: 70
+        }
     }, "./Assets/sprites/", ItemData.items.meta, 128);
 
     const a = (await renderPlayer.renderPlayer())

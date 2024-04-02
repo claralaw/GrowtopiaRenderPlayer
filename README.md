@@ -51,7 +51,11 @@ const ItemData = {
 
     const renderPlayer = new Render({
         hat: 234,
-        skinColor: Types.Skin.TONE4, // or you can use hex colors
+        skin: {
+            skinColor: "#d50cc4", // or Types.Skin.TONE4
+            opacity: 0.4, // u can use without this (for transparent skins)
+            overlay_opac: 70 // u can use without this (for transparent skins)
+        },
         hair: {
             hair: 270,
         },

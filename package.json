@@ -1,7 +1,7 @@
 {
   "name": "growtopia-tools",
-  "version": "0.0.1",
-  "description": "",
+  "version": "0.0.3",
+  "description": "Growtopia Tools for rendering player as buffer",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",

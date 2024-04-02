@@ -1,11 +1,10 @@
 const Jimp = require("jimp");
 
-export async function ChangeColorGetBuffer(buffer, hexColor, cb) { // colorizing with jimp is much funny
+export async function ChangeColorGetBuffer(buffer, hexColor, cb, opacity = 1) { // colorizing with jimp is much funny
     const image = await Jimp.read(buffer);
 
-    const color1 = image.color([{ apply: 'mix', params: [hexColor, cb] }]);
+    const color1 = image.opacity(opacity).color([{ apply: 'mix', params: [hexColor, cb] }]);
     const buffer_img = await image.composite(color1, 0, 0, {mode: Jimp.BLEND_MULTIPLY}).getBufferAsync(Jimp.MIME_PNG);
-
     if(!buffer_img) throw Error("Error occured while changing color")
     else return buffer_img;
 }

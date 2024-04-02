@@ -15,13 +15,12 @@ export class Render {
         if(!this.parts.hat) this.parts.hat = 0;
         if(!this.parts.back) this.parts.back = 0;
         if(!this.parts.shirt) this.parts.shirt = 0;
-        if(!this.parts.hair?.hair) this.parts.hair!.hair = 0;
 
         if(!this.parts.face?.eyeDrop) this.parts.face!.eyeDrop = { r: 0, g: 0, b: 0 }
         if(!this.parts.face?.eyeLens) this.parts.face!.eyeLens = { r: 0, g: 0, b: 0 }
         if(!this.parts.hair?.dye) this.parts.hair!.dye = { r: 0, g: 0, b: 0 };
 
-        if(!this.parts.skinColor) this.parts.skinColor = Skin.TONE4
+        if(!this.parts.skin?.skinColor) this.parts.skin!.skinColor = Skin.TONE4
     }
 
     public async getItemInfo(ItemID: number) {
@@ -40,7 +39,7 @@ export class Render {
     }
 
     private async renderHair(): Promise<CompositeInfo> {
-        let hair = await this.getItemInfo(this.parts.hair!.hair);
+        let hair = await this.getItemInfo(this.parts.hair?.hair!);
     
         let hexColor = (1 << 24 | this.parts.hair!.dye!.r << 16 | this.parts.hair!.dye!.g << 8 | this.parts.hair!.dye!.b).toString(16).slice(1);
         let render = await sharp(this.spriteLocation + `${hair.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: hair.textureX! * 32, top: hair.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).toBuffer()
@@ -146,7 +145,7 @@ export class Render {
     }
 
     private async renderFace(): Promise<CompositeInfo> {
-        let i_face = await this.getItemInfo(this.parts.face!.face);
+        let i_face = await this.getItemInfo(this.parts.face?.face!);
 
         return {
             buffer: await sharp(this.spriteLocation + `${i_face.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: i_face.textureX! * 32, top: i_face.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).toBuffer(),
@@ -170,6 +169,7 @@ export class Render {
 
     private async renderExpression(): Promise<CompositeInfo> { // face still broken lol
         let x = 0, y = 0;
+        //if(this.parts.skin?.skinColor == Skin.SUB_CYAN || this.parts.skin?.skinColor == Skin.SUB_PURPLE) { this.parts.skin.opacity = 0.4; this.parts.skin.overlay_opac = 70; }
         let eyeLens_ = (1 << 24 | this.parts.face?.eyeLens?.r! << 16 | this.parts.face?.eyeLens?.g! << 8 | this.parts.face?.eyeLens?.b!).toString(16).slice(1);
         let eyeDrop_ = (1 << 24 | this.parts.face?.eyeDrop?.r! << 16 | this.parts.face?.eyeDrop?.g! << 8 | this.parts.face?.eyeDrop?.b!).toString(16).slice(1);
         
@@ -186,8 +186,8 @@ export class Render {
         let end = await sharp({create: { width: this.w_h, height: this.w_h, channels: 4, background: {r: 0, g: 0, b: 0, alpha: 0} }})
         .composite([
             {input: eyeDrop_ == "000000" ? eyeDrop : await ChangeColorGetBuffer(eyeDrop, eyeDrop_, 80), top: 0, left: 0},
-            {input: await ChangeColorGetBuffer(eyelid, shadeColor(`${this.parts.skinColor}`, 2)), top: 0, left: 0},
-            {input: this.parts.face?.expression == (Face.SMILE) ? mouth : await ChangeColorGetBuffer(mouth, shadeColor(`${this.parts.skinColor}`, -80)), top: 0, left: 0},
+            {input: await ChangeColorGetBuffer(eyelid, shadeColor(`${this.parts.skin?.skinColor}`, 2), this.parts.skin?.overlay_opac!, this.parts.skin?.opacity), top: 0, left: 0},
+            {input: this.parts.face?.expression == (Face.SMILE) ? mouth : await ChangeColorGetBuffer(mouth, shadeColor(`${this.parts.skin?.skinColor}`, -80), this.parts.skin?.overlay_opac, this.parts.skin?.opacity), top: 0, left: 0},
             {input: eyeLens_ == "000000" ? eyeLens : await ChangeColorGetBuffer(eyeLens, eyeLens_, 80), top: 0, left: 0},
         ]).png().toBuffer();
 
@@ -204,6 +204,8 @@ export class Render {
         const arr: CompositeInfo[] = [];
         const i_feet = await this.getItemInfo(this.parts.feet!);
 
+        if(this.parts.skin?.skinColor == Skin.SUB_CYAN || this.parts.skin?.skinColor == Skin.SUB_PURPLE) { this.parts.skin.opacity = 0.4; this.parts.skin.overlay_opac = 70; }
+
         // read
         const extraLeg = await sharp(this.spriteLocation + "extraleg.png").resize(32,32, {kernel: sharp.kernel.nearest}).toBuffer()
         const arm = await sharp(this.spriteLocation + "arm.png").resize(16,32, {kernel: sharp.kernel.nearest}).toBuffer()
@@ -213,12 +215,12 @@ export class Render {
         // read end
 
         // array body
-        const extra: CompositeInfo = { buffer: await ChangeColorGetBuffer(extraLeg, this.parts.skinColor), x: this.w_h * 0.5 + 24, y: this.w_h * 0.5 - 16, tile: 0};
-        const l_arm: CompositeInfo = { buffer: await ChangeColorGetBuffer(arm, this.parts.skinColor), x: this.w_h * 0.5 + 4, y: this.w_h * 0.5 - 20, tile: 6}
-        const r_arm: CompositeInfo = { buffer: await ChangeColorGetBuffer(arm, this.parts.skinColor), x: this.w_h * 0.5 + 4, y: this.w_h * 0.5 + 10, tile: -1}
-        const body: CompositeInfo = { buffer: await ChangeColorGetBuffer(r_body, this.parts.skinColor), x: this.w_h * 0.5 - 32, y: this.w_h * 0.5 - 32, tile: 0 }
-        const ren_r_f: CompositeInfo = { buffer: this.parts.feet != 0 ? r_feet : await ChangeColorGetBuffer(r_feet, this.parts.skinColor), x: this.w_h * 0.5 - 32, y: this.w_h * 0.5 - 32, tile: 0}
-        const ren_l_f: CompositeInfo = { buffer: this.parts.feet != 0 ? l_feet : await ChangeColorGetBuffer(l_feet, this.parts.skinColor), x: this.w_h * 0.5 - 32, y: this.w_h * 0.5 - 32, tile: 0 }
+        const extra: CompositeInfo = { buffer: await ChangeColorGetBuffer(extraLeg, this.parts.skin?.skinColor, this.parts.skin?.overlay_opac, this.parts.skin?.opacity), x: this.w_h * 0.5 + 24, y: this.w_h * 0.5 - 16, tile: 0};
+        const l_arm: CompositeInfo = { buffer: await ChangeColorGetBuffer(arm, this.parts.skin?.skinColor, this.parts.skin?.overlay_opac, this.parts.skin?.opacity), x: this.w_h * 0.5 + 4, y: this.w_h * 0.5 - 20, tile: 6}
+        const r_arm: CompositeInfo = { buffer: await ChangeColorGetBuffer(arm, this.parts.skin?.skinColor, this.parts.skin?.overlay_opac, this.parts.skin?.opacity), x: this.w_h * 0.5 + 4, y: this.w_h * 0.5 + 10, tile: -1}
+        const body: CompositeInfo = { buffer: await ChangeColorGetBuffer(r_body, this.parts.skin?.skinColor, this.parts.skin?.overlay_opac, this.parts.skin?.opacity), x: this.w_h * 0.5 - 32, y: this.w_h * 0.5 - 32, tile: 0 }
+        const ren_r_f: CompositeInfo = { buffer: this.parts.feet != 0 ? r_feet : await ChangeColorGetBuffer(r_feet, this.parts.skin?.skinColor, this.parts.skin?.overlay_opac, this.parts.skin?.opacity), x: this.w_h * 0.5 - 32, y: this.w_h * 0.5 - 32, tile: 0}
+        const ren_l_f: CompositeInfo = { buffer: this.parts.feet != 0 ? l_feet : await ChangeColorGetBuffer(l_feet, this.parts.skin?.skinColor, this.parts.skin?.overlay_opac, this.parts.skin?.opacity), x: this.w_h * 0.5 - 32, y: this.w_h * 0.5 - 32, tile: 0 }
         
         arr.push(extra, l_arm, r_arm, body, ren_l_f, ren_r_f)
         arr.push(await this.renderExpression())

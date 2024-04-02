@@ -16,7 +16,11 @@ export interface CompositeInfo {
 }
 
 export interface BodyParts {
-    skinColor: string;
+    skin: {
+        skinColor: string;
+        opacity?: number; // change 0-1
+        overlay_opac?: number; // change 60-100
+    }
     feet: number;
     shirt: number;
     hand: number;
@@ -29,7 +33,7 @@ export interface BodyParts {
         dye?: DyeTypes;
     }
     face: {
-        face: number;
+        face?: number;
         expression: Face,
         eyeLens?: DyeTypes;
         eyeDrop?: DyeTypes;
@@ -37,7 +41,11 @@ export interface BodyParts {
 }
 
 export const Skin = {
-    SLIMED: "#72E7C4",
+    SLIMED: "#72E7C4", // idk why i added this
+
+    SUB_PURPLE: "#6C2477",
+    SUB_CYAN: "#4E9CB3",
+    
     TONE1: "#785C50",
     TONE2: "#967264",
     TONE3: "#B48A78",
