@@ -33,7 +33,7 @@ class ItemsDat {
   /**
    * @param data The data to encode/decode.
    */
-  constructor(private data?: Buffer) {}
+  constructor(private data?: Buffer, private cItemFile?: Buffer) {}
 
   
   /**
@@ -245,8 +245,14 @@ class ItemsDat {
                 this.mempos += 2 + this.data!.readInt16LE(this.mempos);
             }
           }
-
           meta.items.push(item)
+        }
+        
+        if (this.cItemFile) {
+          const file = JSON.parse(this.cItemFile.toString())
+          for(var j = 0; j < file.items.length; j++) {
+            meta.items.push(file.items[j]);
+          }
         }
 
         this.mempos = 0

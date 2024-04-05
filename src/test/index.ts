@@ -11,10 +11,11 @@ const ItemData = {
 
 
 (async() => {
-    ItemData.items.meta = await new ItemsDat(readFileSync("./Assets/items.dat")).decode();
+    ItemData.items.meta = await new ItemsDat(readFileSync("./Assets/items.dat"), readFileSync("citem.json")).decode();
 
     console.time("Render");
     const renderPlayer = new Render({
+        back: -1,
         /*back: 8024,
         hand: 1438,
         hat: 4820,
@@ -34,9 +35,7 @@ const ItemData = {
             expression: Face.DEFAULT
         },
         skin: {
-            skinColor: "#d50cc4",
-            opacity: 0.4,
-            overlay_opac: 70
+            skinColor: Skin.TONE4
         }
     }, "./Assets/sprites/", ItemData.items.meta, 128);
 

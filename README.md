@@ -28,6 +28,36 @@ To convert .rttex files to .png you can use
 
 <br>
 
+## Custom items
+We are supporting custom items, you can use your own items for your character.
+
+How to use custom items?:
+
+> citem.json
+Create citem.json, Example:
+```json
+{
+    "items": [
+        {
+            "id": -1, // go minus to prevent normal items
+            "name": "Purple Bubble Wings",
+            "texture": "../../your_image.png", // your custom item image location
+            "textureX": 0, //image x
+            "textureY": 0 // image y
+        }
+    ]
+}
+```
+
+```javascript
+ItemData.items.meta = await new ItemsDat(readFileSync("./Assets/items.dat"), readFileSync("citem.json")).decode();
+                                                                               // citem.json location
+```
+
+> You can use [Tilemaker Website](https://leq-web.vercel.app) to combine your images
+
+<br>
+
 ## Body parts and Expressions
 - [Expressions and Body parts](https://github.com/FakeLeq/GrowtopiaRenderPlayer/blob/main/src/Render/types/Types.ts)
 

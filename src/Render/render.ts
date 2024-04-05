@@ -24,14 +24,14 @@ export class Render {
     }
 
     public async getItemInfo(ItemID: number) {
-        return this.itemData.items![ItemID];
+        return this.itemData.items.find(({ id }) => id == ItemID);
     }
 
     private async renderHat(): Promise<CompositeInfo> {
         let i_hat = await this.getItemInfo(this.parts.hat!); 
 
         return {
-            buffer: await sharp(this.spriteLocation + `${i_hat.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: i_hat.textureX! * 32, top: i_hat.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).toBuffer(),
+            buffer: await sharp(this.spriteLocation + `${i_hat!.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: i_hat!.textureX! * 32, top: i_hat!.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).toBuffer(),
             x: this.w_h * 0.5 - 64,
             y: this.w_h * 0.5 - 32,
             tile: 6,
@@ -42,7 +42,7 @@ export class Render {
         let hair = await this.getItemInfo(this.parts.hair?.hair!);
     
         let hexColor = (1 << 24 | this.parts.hair!.dye!.r << 16 | this.parts.hair!.dye!.g << 8 | this.parts.hair!.dye!.b).toString(16).slice(1);
-        let render = await sharp(this.spriteLocation + `${hair.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: hair.textureX! * 32, top: hair.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).toBuffer()
+        let render = await sharp(this.spriteLocation + `${hair!.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: hair!.textureX! * 32, top: hair!.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).toBuffer()
 
         return {
             buffer: hexColor == "000000" ? render : await ChangeColorGetBuffer(render, shadeColor(hexColor, 0)),
@@ -54,9 +54,9 @@ export class Render {
 
     private async renderNeck(): Promise<CompositeInfo> {
         let i_neck = await this.getItemInfo(this.parts.neck!);
-        let neck = await sharp(this.spriteLocation + `${i_neck.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: i_neck.textureX! * 32, top: i_neck.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).toBuffer();
+        let neck = await sharp(this.spriteLocation + `${i_neck!.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: i_neck!.textureX! * 32, top: i_neck!.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).toBuffer();
 
-        switch (i_neck.id) {
+        switch (i_neck!.id) {
             /* Silk Tie */
             case 3372: neck = await ChangeColorGetBuffer(neck, "#C80000", 80); break; //red tie
             case 3374: neck = await ChangeColorGetBuffer(neck, "#FFFF00", 80); break; //yellow tie
@@ -80,7 +80,7 @@ export class Render {
         let pant = await this.getItemInfo(this.parts.pant!)
 
         return {
-            buffer: await sharp(this.spriteLocation + `${pant.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: pant.textureX! * 32, top: pant.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).toBuffer(),
+            buffer: await sharp(this.spriteLocation + `${pant!.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: pant!.textureX! * 32, top: pant!.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).toBuffer(),
             x: this.w_h * 0.5 - 32,
             y: this.w_h * 0.5 - 32,
             tile: 1,
@@ -91,7 +91,7 @@ export class Render {
         let hand = await this.getItemInfo(this.parts.hand!)
 
         return {
-            buffer: await sharp(this.spriteLocation + `${hand.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: hand.textureX! * 32, top: hand.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).toBuffer(),
+            buffer: await sharp(this.spriteLocation + `${hand!.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: hand!.textureX! * 32, top: hand!.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).toBuffer(),
             x: this.w_h * 0.5 + 4,
             y: this.w_h * 0.5 - 46,
             tile: 5,
@@ -100,9 +100,9 @@ export class Render {
 
     private async renderShirt(): Promise<CompositeInfo> {
         let i_shirt = await this.getItemInfo(this.parts.shirt!);
-        let shirt = await sharp(this.spriteLocation + `${i_shirt.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: i_shirt.textureX! * 32, top: i_shirt.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).png().toBuffer();
+        let shirt = await sharp(this.spriteLocation + `${i_shirt!.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: i_shirt!.textureX! * 32, top: i_shirt!.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).png().toBuffer();
 
-        switch(i_shirt.id) {
+        switch(i_shirt!.id) {
              /* Silk Vest */
              case 3360: shirt = await ChangeColorGetBuffer(shirt, "#FF3232", 80); break; //red vest
              case 3362: shirt = await ChangeColorGetBuffer(shirt, "#32FF32", 80); break; //green vest
@@ -125,13 +125,13 @@ export class Render {
     private async renderBack(): Promise<CompositeInfo> {
         let i_back = await this.getItemInfo(this.parts.back!)
         let x = this.w_h * 0.5 - 32, y = this.w_h * 0.5 - 32;
-        let back = await sharp(this.spriteLocation + `${i_back.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: i_back.textureX! * 32, top: i_back.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).png().toBuffer();
+        let back = await sharp(this.spriteLocation + `${i_back!.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: i_back!.textureX! * 32, top: i_back!.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).png().toBuffer();
 
-        switch(i_back.id) {
+        switch(i_back!.id) {
 
             // auras
             case 4970: case 4972: case 6284: case 8084: case 8024: case 8026:
-            case 3114: back = await sharp(this.spriteLocation + `${i_back.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: i_back.textureX! * 32, top: i_back.textureY! * 32 }).resize(104, 104, {kernel: sharp.kernel.nearest}).toBuffer(); x = this.w_h * 0.5 - 68; y = this.w_h * 0.5 - 52; break;
+            case 3114: back = await sharp(this.spriteLocation + `${i_back!.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: i_back!.textureX! * 32, top: i_back!.textureY! * 32 }).resize(104, 104, {kernel: sharp.kernel.nearest}).toBuffer(); x = this.w_h * 0.5 - 68; y = this.w_h * 0.5 - 52; break;
 
             default: back;
         }
@@ -148,7 +148,7 @@ export class Render {
         let i_face = await this.getItemInfo(this.parts.face?.face!);
 
         return {
-            buffer: await sharp(this.spriteLocation + `${i_face.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: i_face.textureX! * 32, top: i_face.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).toBuffer(),
+            buffer: await sharp(this.spriteLocation + `${i_face!.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: i_face!.textureX! * 32, top: i_face!.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).toBuffer(),
             x: this.w_h * 0.5 - 32,
             y: this.w_h * 0.5 - 32,
             tile: 4,
@@ -157,7 +157,7 @@ export class Render {
 
     private async renderVest(): Promise<CompositeInfo> {
         let data = await this.getItemInfo(this.parts.shirt!);
-        let vest = await sharp(this.spriteLocation + `${data.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: (data.textureX! + 1) * 32, top: data.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).png().toBuffer();
+        let vest = await sharp(this.spriteLocation + `${data!.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: (data!.textureX! + 1) * 32, top: data!.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).png().toBuffer();
 
         return {
             buffer: vest,
@@ -185,10 +185,10 @@ export class Render {
 
         let end = await sharp({create: { width: this.w_h, height: this.w_h, channels: 4, background: {r: 0, g: 0, b: 0, alpha: 0} }})
         .composite([
-            {input: eyeDrop_ == "000000" ? eyeDrop : await ChangeColorGetBuffer(eyeDrop, eyeDrop_, 80), top: 0, left: 0},
+            {input: eyeDrop_ == "000000" || !eyeDrop_ ? eyeDrop : await ChangeColorGetBuffer(eyeDrop, eyeDrop_, 80), top: 0, left: 0},
             {input: await ChangeColorGetBuffer(eyelid, shadeColor(`${this.parts.skin?.skinColor}`, 2), this.parts.skin?.overlay_opac!, this.parts.skin?.opacity), top: 0, left: 0},
             {input: this.parts.face?.expression == (Face.SMILE) ? mouth : await ChangeColorGetBuffer(mouth, shadeColor(`${this.parts.skin?.skinColor}`, -80), this.parts.skin?.overlay_opac, this.parts.skin?.opacity), top: 0, left: 0},
-            {input: eyeLens_ == "000000" ? eyeLens : await ChangeColorGetBuffer(eyeLens, eyeLens_, 80), top: 0, left: 0},
+            {input: !eyeLens_ ? eyeLens : await ChangeColorGetBuffer(eyeLens, eyeLens_, 80), top: 0, left: 0},
         ]).png().toBuffer();
 
         
@@ -210,8 +210,8 @@ export class Render {
         const extraLeg = await sharp(this.spriteLocation + "extraleg.png").resize(32,32, {kernel: sharp.kernel.nearest}).toBuffer()
         const arm = await sharp(this.spriteLocation + "arm.png").resize(16,32, {kernel: sharp.kernel.nearest}).toBuffer()
         const r_body = await sharp(this.spriteLocation + "body.png").resize(64,64, {kernel: sharp.kernel.nearest}).toBuffer()
-        const r_feet = await sharp(this.spriteLocation + `${(this.parts.feet) != 0 ? i_feet.texture?.replace(".rttex", ".png") : "player_feet.png"}`).extract({ width: 32, height: 32, left: (this.parts.feet != 0 ? i_feet!.textureX! : 0) * 32, top: ((((this.parts.feet != 0 ? i_feet!.textureY! : 0)) * 2) * 32) + 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).toBuffer() 
-        const l_feet = await sharp(this.spriteLocation + `${(this.parts.feet) != 0 ? i_feet.texture?.replace(".rttex", ".png") : "player_feet.png"}`).extract({ width: 32, height: 32, left: (this.parts.feet != 0 ? i_feet!.textureX! : 0) * 32, top: (((this.parts.feet != 0 ? i_feet!.textureY! : 0)) * 2) * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).toBuffer() 
+        const r_feet = await sharp(this.spriteLocation + `${(this.parts.feet) != 0 ? i_feet!.texture?.replace(".rttex", ".png") : "player_feet.png"}`).extract({ width: 32, height: 32, left: (this.parts.feet != 0 ? i_feet!.textureX! : 0) * 32, top: ((((this.parts.feet != 0 ? i_feet!.textureY! : 0)) * 2) * 32) + 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).toBuffer() 
+        const l_feet = await sharp(this.spriteLocation + `${(this.parts.feet) != 0 ? i_feet!.texture?.replace(".rttex", ".png") : "player_feet.png"}`).extract({ width: 32, height: 32, left: (this.parts.feet != 0 ? i_feet!.textureX! : 0) * 32, top: (((this.parts.feet != 0 ? i_feet!.textureY! : 0)) * 2) * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).toBuffer() 
         // read end
 
         // array body
