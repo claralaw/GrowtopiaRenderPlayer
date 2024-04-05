@@ -31,10 +31,11 @@ To convert .rttex files to .png you can use
 ## Custom items
 We are supporting custom items, you can use your own items for your character.
 
+![img](https://github.com/FakeLeq/GrowtopiaRenderPlayer/blob/main/img/citem.png?raw=true)
+
 How to use custom items?:
 
-> citem.json
-Create citem.json, Example:
+> Create citem.json, Example:
 ```json
 {
     "items": [
