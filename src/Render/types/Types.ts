@@ -2,12 +2,6 @@ export enum Face {
     DEFAULT, SMILE
 }
 
-export interface DyeTypes {
-    r: number;
-    g: number;
-    b: number
-}
-
 export interface CompositeInfo {
     buffer: Buffer;
     x: number;
@@ -30,13 +24,13 @@ export interface BodyParts {
     back: number;
     hair?: {
         hair: number;
-        dye?: DyeTypes;
+        dye?: string; // #0 to default
     }
     face: {
         face?: number;
         expression: Face,
-        eyeLens?: DyeTypes;
-        eyeDrop?: DyeTypes;
+        eyeLens?: string; // #0 to default
+        eyeDrop?: string; // #0 to default
     }
 }
 

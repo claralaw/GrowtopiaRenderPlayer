@@ -89,11 +89,12 @@ const ItemData = {
         },
         hair: {
             hair: 270,
+            dye: "#f197f7"
         },
         face: {
             expression: Types.Face.SMILE,
-            eyeLens: { r: 0, g: 193, b: 193 },
-            eyeDrop: { r: 0, g: 193, b: 0 },
+            eyeLens: "#ff0000",
+            eyeDrop: "#edeb5c",
         },
     }, "Assets/sprites/", ItemData.items.meta, 128)
        //sprites location  //item data         // width_heigh

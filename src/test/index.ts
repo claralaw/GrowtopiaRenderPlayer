@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from "fs";
+import { appendFileSync, readFileSync, writeFileSync } from "fs";
 import { Face, Skin } from "../Render/types/Types";
 import { ItemsDatMeta } from "../Utils/ItemsDat/Types";
 import { ItemsDat, Render } from "..";
@@ -11,11 +11,10 @@ const ItemData = {
 
 
 (async() => {
-    ItemData.items.meta = await new ItemsDat(readFileSync("./Assets/items.dat"), readFileSync("citem.json")).decode();
+    ItemData.items.meta = await new ItemsDat(readFileSync("./Assets/items.dat")).decode();
 
     console.time("Render");
     const renderPlayer = new Render({
-        back: -1,
         /*back: 8024,
         hand: 1438,
         hat: 4820,
@@ -29,10 +28,13 @@ const ItemData = {
             eyeLens: { r: 0, g: 193, b: 193 },
         },*/
         hair: {
-           hair: 0,
+           hair: 270,
+           dye: "#f197f7"
         },
         face: {
-            expression: Face.DEFAULT
+            expression: Face.DEFAULT,
+            eyeLens: "#ff0000",
+            eyeDrop: "#edeb5c"
         },
         skin: {
             skinColor: Skin.TONE4

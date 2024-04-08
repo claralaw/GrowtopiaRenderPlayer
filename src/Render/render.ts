@@ -16,9 +16,7 @@ export class Render {
         if(!this.parts.back) this.parts.back = 0;
         if(!this.parts.shirt) this.parts.shirt = 0;
 
-        if(!this.parts.face?.eyeDrop) this.parts.face!.eyeDrop = { r: 0, g: 0, b: 0 }
-        if(!this.parts.face?.eyeLens) this.parts.face!.eyeLens = { r: 0, g: 0, b: 0 }
-        if(!this.parts.hair?.dye) this.parts.hair!.dye = { r: 0, g: 0, b: 0 };
+        if(!this.parts.face?.eyeLens) this.parts.face!.eyeLens = "#000";
 
         if(!this.parts.skin?.skinColor) this.parts.skin!.skinColor = Skin.TONE4
     }
@@ -40,12 +38,10 @@ export class Render {
 
     private async renderHair(): Promise<CompositeInfo> {
         let hair = await this.getItemInfo(this.parts.hair?.hair!);
-    
-        let hexColor = (1 << 24 | this.parts.hair!.dye!.r << 16 | this.parts.hair!.dye!.g << 8 | this.parts.hair!.dye!.b).toString(16).slice(1);
         let render = await sharp(this.spriteLocation + `${hair!.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: hair!.textureX! * 32, top: hair!.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).toBuffer()
 
         return {
-            buffer: hexColor == "000000" ? render : await ChangeColorGetBuffer(render, shadeColor(hexColor, 0)),
+            buffer: !this.parts.hair?.dye ? render : await ChangeColorGetBuffer(render, shadeColor(this.parts.hair?.dye, 0)),
             x: this.w_h * 0.5 - 64,
             y: this.w_h * 0.5 - 32,
             tile: 5
@@ -167,12 +163,9 @@ export class Render {
         }
     }
 
-    private async renderExpression(): Promise<CompositeInfo> { // face still broken lol
+    private async renderExpression(): Promise<CompositeInfo> {
         let x = 0, y = 0;
-        //if(this.parts.skin?.skinColor == Skin.SUB_CYAN || this.parts.skin?.skinColor == Skin.SUB_PURPLE) { this.parts.skin.opacity = 0.4; this.parts.skin.overlay_opac = 70; }
-        let eyeLens_ = (1 << 24 | this.parts.face?.eyeLens?.r! << 16 | this.parts.face?.eyeLens?.g! << 8 | this.parts.face?.eyeLens?.b!).toString(16).slice(1);
-        let eyeDrop_ = (1 << 24 | this.parts.face?.eyeDrop?.r! << 16 | this.parts.face?.eyeDrop?.g! << 8 | this.parts.face?.eyeDrop?.b!).toString(16).slice(1);
-        
+
         switch(this.parts.face?.expression) {
             case Face.DEFAULT: x = 0, y = 0; break;
             case Face.SMILE: x = 0, y = 1; break;
@@ -185,10 +178,10 @@ export class Render {
 
         let end = await sharp({create: { width: this.w_h, height: this.w_h, channels: 4, background: {r: 0, g: 0, b: 0, alpha: 0} }})
         .composite([
-            {input: eyeDrop_ == "000000" || !eyeDrop_ ? eyeDrop : await ChangeColorGetBuffer(eyeDrop, eyeDrop_, 80), top: 0, left: 0},
+            {input: !this.parts.face?.eyeDrop ? eyeDrop : await ChangeColorGetBuffer(eyeDrop, this.parts.face?.eyeDrop, 80), top: 0, left: 0},
             {input: await ChangeColorGetBuffer(eyelid, shadeColor(`${this.parts.skin?.skinColor}`, 2), this.parts.skin?.overlay_opac!, this.parts.skin?.opacity), top: 0, left: 0},
             {input: this.parts.face?.expression == (Face.SMILE) ? mouth : await ChangeColorGetBuffer(mouth, shadeColor(`${this.parts.skin?.skinColor}`, -80), this.parts.skin?.overlay_opac, this.parts.skin?.opacity), top: 0, left: 0},
-            {input: !eyeLens_ ? eyeLens : await ChangeColorGetBuffer(eyeLens, eyeLens_, 80), top: 0, left: 0},
+            {input: await ChangeColorGetBuffer(eyeLens, this.parts.face?.eyeLens, 80), top: 0, left: 0},
         ]).png().toBuffer();
 
         
