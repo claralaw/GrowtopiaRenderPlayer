@@ -17,7 +17,7 @@ For rendering your player, you need some assets (items.dat and item sprites)
 You can find items.dat and item sprites in
 
 ```
-%HOMEPATH%\AppData\Local\Growtopia
+%LOCALAPPDATA%/Growtopia
 ```
 
 To convert .rttex files to .png you can use 
