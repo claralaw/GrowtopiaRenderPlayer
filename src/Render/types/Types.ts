@@ -1,7 +1,3 @@
-export enum Face {
-    DEFAULT, SMILE
-}
-
 export interface CompositeInfo {
     buffer: Buffer;
     x: number;
@@ -9,11 +5,29 @@ export interface CompositeInfo {
     tile: number;
 }
 
+export interface Color {
+    r: number;
+    g: number;
+    b: number;
+}
+
+export enum Face {
+    DEFAULT, 
+    SMILE, 
+    SAD,
+    OMG,
+    MAD,
+    LOL,
+    WINK,
+    TROLL,
+    HMM // idk the name ':/'
+}
+
 export interface BodyParts {
     skin: {
-        skinColor: string;
-        opacity?: number; // change 0-1
-        overlay_opac?: number; // change 60-100
+        skinColor: Color;
+        //opacity?: number; 
+        //overlay_opac?: number; 
     }
     feet: number;
     shirt: number;
@@ -22,40 +36,40 @@ export interface BodyParts {
     pant: number;
     hat: number;
     back: number;
-    hair?: {
+    hair: {
         hair: number;
-        dye?: string; // #0 to default
+        dye?: Color; 
     }
     face: {
         face?: number;
         expression: Face,
-        eyeLens?: string; // #0 to default
-        eyeDrop?: string; // #0 to default
+        eyeLens?: Color; 
+        eyeDrop?: Color; 
     }
 }
 
 export const Skin = {
-    SLIMED: "#72E7C4", // idk why i added this
+    SLIMED: {r: 114, g: 231, b: 196},
 
-    SUB_PURPLE: "#6C2477",
-    SUB_CYAN: "#4E9CB3",
+    //SUB_PURPLE: "#6C2477",
+    //SUB_CYAN: "#4E9CB3",
     
-    TONE1: "#785C50",
-    TONE2: "#967264",
-    TONE3: "#B48A78",
-    TONE4: "#C39582",
-    TONE5: "#E1AC96",
-    TONE6: "#FFC3AA",
-    TONE7: "#FFCEB4",
-    TONE8: "#FFE5C8",
-    TONE9: "#B1DDA3",
-    TONE10: "#41C2C5",
-    TONE11: "#D74B2B",
-    TONE12: "#418A2A",
-    TONE13: "#A951D5",
-    TONE14: "#F0F0F0",
-    TONE15: "#3D7AD3",
-    TONE16: "#B1CBEF",
-    TONE17: "#FF940B",
-    TONE18: "#E94756"
+    TONE1: { r: 120, g: 92, b: 80 },
+    TONE2: { r: 150, g: 114, b: 100 },
+    TONE3: { r: 180, g: 138, b: 120 },
+    TONE4: { r: 195, g: 149, b: 130 },
+    TONE5: { r: 225, g: 172, b: 150 },
+    TONE6: { r: 255, g: 195, b: 170 },
+    TONE7: { r: 255, g: 206, b: 180 },
+    TONE8: { r: 255, g: 229, b: 200 },
+    TONE9: { r: 177, g: 221, b: 163 },
+    TONE10: { r: 65, g: 194, b: 197 },
+    TONE11: { r: 215, g: 75, b: 43 },
+    TONE12: { r: 65, g: 138, b: 42 },
+    TONE13: { r: 169, g: 81, b: 213 },
+    TONE14: { r: 240, g: 240, b: 240 },
+    TONE15: { r: 61, g: 122, b: 211 },
+    TONE16: { r: 177, g: 203, b: 239 },
+    TONE17: { r: 255, g: 148, b: 11 },
+    TONE18: { r: 233, g: 71, b: 86 }
 }

@@ -80,21 +80,26 @@ const ItemData = {
     ItemData.items.meta = await new ItemsDat(readFileSync("./Assets/items.dat")).decode();
                                                         // items.dat location
 
+    const lens = await colorWithDyes("BLUE/BLUE/BLUE/BLUE/GREEN/GREEN/GREEN/GREEN/BLUE/BLUE/GREEN");
+    const hair = await colorWithDyes("BLUE/BLUE/BLUE/BLUE/BLUE/BLUE/BLUE/BLUE/BLUE/BLUE/BLUE/BLUE/BLUE/BLUE/BLUE");
+
+    // Dyes (RED, GREEN, BLUE, BLACK, SHAMPOO)
+    // You can use dyes for hair, lens, eyedrops
+    // You can use SHAMPOO as lens/eyedrop cleaner
+
     const renderPlayer = new Render({
         hat: 234,
         skin: {
-            skinColor: "#d50cc4", // or Types.Skin.TONE4
-            opacity: 0.4, // u can use without this (for transparent skins)
-            overlay_opac: 70 // u can use without this (for transparent skins)
+            skinColor: { r: 65, g: 138, b: 42 }, // or Types.Skin.TONE4
         },
         hair: {
             hair: 270,
-            dye: "#f197f7"
+            dye: { r: hair.r, g: hair.g, b: hair.b } // or custom rgb
         },
         face: {
-            expression: Types.Face.SMILE,
-            eyeLens: "#ff0000",
-            eyeDrop: "#edeb5c",
+            expression: Types.Face.TROLL,
+            eyeLens: { r: lens.r, g: lens.g, b: lens.b }, // or custom rgb
+            eyeDrop: { r: 137, g: 86, b: 154 } // or colorWithDyes() function
         },
     }, "Assets/sprites/", ItemData.items.meta, 128)
        //sprites location  //item data         // width_heigh

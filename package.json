@@ -1,6 +1,6 @@
 {
   "name": "growtopia-tools",
-  "version": "0.1.1",
+  "version": "0.1.5",
   "description": "Growtopia Tools for rendering player as buffer",
   "main": "dist/index.js",
   "scripts": {
@@ -17,7 +17,6 @@
   "author": "Leqend",
   "license": "MIT",
   "dependencies": {
-    "jimp": "^0.22.8",
     "sharp": "^0.33.3"
   },
   "devDependencies": {

@@ -1,5 +1,5 @@
 import sharp from "sharp";
-import { ChangeColorGetBuffer, shadeColor } from "../Utils/Recolor";
+import { tint, shadeColor } from "../Utils/Recolor";
 import { BodyParts, CompositeInfo, Face, Skin } from "./types/Types";
 import { ItemsDatMeta } from "../Utils/ItemsDat/Types";
 
@@ -15,10 +15,6 @@ export class Render {
         if(!this.parts.hat) this.parts.hat = 0;
         if(!this.parts.back) this.parts.back = 0;
         if(!this.parts.shirt) this.parts.shirt = 0;
-
-        if(!this.parts.face?.eyeLens) this.parts.face!.eyeLens = "#000";
-
-        if(!this.parts.skin?.skinColor) this.parts.skin!.skinColor = Skin.TONE4
     }
 
     public async getItemInfo(ItemID: number) {
@@ -41,7 +37,7 @@ export class Render {
         let render = await sharp(this.spriteLocation + `${hair!.texture?.replace(".rttex", ".png")}`).extract({ width: 32, height: 32, left: hair!.textureX! * 32, top: hair!.textureY! * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).toBuffer()
 
         return {
-            buffer: !this.parts.hair?.dye ? render : await ChangeColorGetBuffer(render, shadeColor(this.parts.hair?.dye, 0)),
+            buffer: !this.parts.hair?.dye ? render : await tint(render, {r: this.parts.hair.dye.r, g: this.parts.hair.dye.g, b: this.parts.hair.dye.b}),
             x: this.w_h * 0.5 - 64,
             y: this.w_h * 0.5 - 32,
             tile: 5
@@ -54,11 +50,11 @@ export class Render {
 
         switch (i_neck!.id) {
             /* Silk Tie */
-            case 3372: neck = await ChangeColorGetBuffer(neck, "#C80000", 80); break; //red tie
-            case 3374: neck = await ChangeColorGetBuffer(neck, "#FFFF00", 80); break; //yellow tie
-            case 3376: neck = await ChangeColorGetBuffer(neck, "#282828", 80); break; //black tie
-            case 3378: neck = await ChangeColorGetBuffer(neck, "#0000bc", 80); break; //blue tie
-            case 3380: neck = await ChangeColorGetBuffer(neck, "#828282", 80); break; // grey tie;
+            case 3372: neck = await tint(neck, {r: 200, g: 0, b: 0}); break; //red tie
+            case 3374: neck = await tint(neck, {r: 255, g: 255, b: 0}); break; //yellow tie
+            case 3376: neck = await tint(neck, {r: 40, g: 40, b: 40}); break; //black tie
+            case 3378: neck = await tint(neck, {r: 0, g: 0, b: 188}); break; //blue tie
+            case 3380: neck = await tint(neck, {r: 130, g: 130, b: 130}); break; // grey tie;
             /* */
             default: neck;
                 break;
@@ -100,12 +96,12 @@ export class Render {
 
         switch(i_shirt!.id) {
              /* Silk Vest */
-             case 3360: shirt = await ChangeColorGetBuffer(shirt, "#FF3232", 80); break; //red vest
-             case 3362: shirt = await ChangeColorGetBuffer(shirt, "#32FF32", 80); break; //green vest
-             case 3364: shirt = await ChangeColorGetBuffer(shirt, "#0032FF", 80); break; //blue vest
-             case 3366: shirt = await ChangeColorGetBuffer(shirt, "#FF00FF", 80); break; //purple vest
-             case 3368: shirt = await ChangeColorGetBuffer(shirt, "#C8C8C8", 80); break; // grey vest
-             case 3370: shirt = await ChangeColorGetBuffer(shirt, "#373737", 80); break; //black vest
+             case 3360: shirt = await tint(shirt, {r: 255, g: 50, b: 50}); break; //red vest
+             case 3362: shirt = await tint(shirt, {r: 50, g: 255, b: 50}); break; //green vest
+             case 3364: shirt = await tint(shirt, {r: 0, g: 50, b: 255}); break; //blue vest
+             case 3366: shirt = await tint(shirt, {r: 255, g: 0, b: 255}); break; //purple vest
+             case 3368: shirt = await tint(shirt, {r: 200, g: 200, b: 200}); break; // grey vest
+             case 3370: shirt = await tint(shirt, {r: 55, g: 55, b: 55}); break; //black vest
              /* */
             default: shirt; break;
         }
@@ -169,19 +165,26 @@ export class Render {
         switch(this.parts.face?.expression) {
             case Face.DEFAULT: x = 0, y = 0; break;
             case Face.SMILE: x = 0, y = 1; break;
+            case Face.SAD: x = 1, y = 1; break;
+            case Face.OMG: x = 3, y = 1; break;
+            case Face.MAD: x = 4, y = 1; break;
+            case Face.LOL: x = 7, y = 1; break;
+            case Face.WINK: x = 4, y = 2; break;
+            case Face.TROLL: x = 6, y = 2; break;
+            case Face.HMM: x = 1, y = 2; break;
         }
 
         let eyeDrop = await sharp(this.spriteLocation + `player_eyes.png`).extract({ width: 32, height: 32, left: x * 32, top: y * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).png().toBuffer();
         let eyeLens = await sharp(this.spriteLocation + `player_eyes2.png`).extract({ width: 32, height: 32, left: x * 32, top: y * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).png().toBuffer();
         let mouth = await sharp(this.spriteLocation + `player_face.png`).extract({ width: 32, height: 32, left: x * 32, top: y * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).png().toBuffer();
-        let eyelid = await sharp(this.spriteLocation + `player_eyes.png`).extract({ width: 32, height: 32, left: 0 * 32, top: 4 * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).png().toBuffer();
+        let eyelid = await sharp(this.spriteLocation + `player_eyes.png`).extract({ width: 32, height: 32, left: x * 32, top: y * 32 }).resize(64,64, {kernel: sharp.kernel.nearest}).png().toBuffer();
 
         let end = await sharp({create: { width: this.w_h, height: this.w_h, channels: 4, background: {r: 0, g: 0, b: 0, alpha: 0} }})
         .composite([
-            {input: !this.parts.face?.eyeDrop ? eyeDrop : await ChangeColorGetBuffer(eyeDrop, this.parts.face?.eyeDrop, 80), top: 0, left: 0},
-            {input: await ChangeColorGetBuffer(eyelid, shadeColor(`${this.parts.skin?.skinColor}`, 2), this.parts.skin?.overlay_opac!, this.parts.skin?.opacity), top: 0, left: 0},
-            {input: this.parts.face?.expression == (Face.SMILE) ? mouth : await ChangeColorGetBuffer(mouth, shadeColor(`${this.parts.skin?.skinColor}`, -80), this.parts.skin?.overlay_opac, this.parts.skin?.opacity), top: 0, left: 0},
-            {input: await ChangeColorGetBuffer(eyeLens, this.parts.face?.eyeLens, 80), top: 0, left: 0},
+            {input: !this.parts.face!.eyeDrop! ? eyeDrop : await tint(eyeDrop, { r: this.parts.face!.eyeDrop!.r, g: this.parts.face!.eyeDrop!.g, b:this.parts.face!.eyeDrop!.b }), top: 0, left: 0},
+            {input: await tint(eyelid, shadeColor({ r: this.parts.skin!.skinColor.r, g: this.parts.skin!.skinColor.g, b: this.parts.skin!.skinColor.b}, 2)), top: 0, left: 0},
+            {input: this.parts.face?.expression == (Face.DEFAULT) ? await tint(mouth, shadeColor({ r: this.parts.skin!.skinColor.r, g: this.parts.skin!.skinColor.g, b: this.parts.skin!.skinColor.b}, -60)) : mouth, top: 0, left: 0},
+            {input: !this.parts.face!.eyeLens! ? await tint(eyeLens, { r: 0, g: 0, b: 0 }) : await tint(eyeLens, { r: this.parts.face!.eyeLens!.r, g: this.parts.face!.eyeLens!.g, b: this.parts.face!.eyeLens!.b }), top: 0, left: 0},
         ]).png().toBuffer();
 
         
@@ -197,7 +200,7 @@ export class Render {
         const arr: CompositeInfo[] = [];
         const i_feet = await this.getItemInfo(this.parts.feet!);
 
-        if(this.parts.skin?.skinColor == Skin.SUB_CYAN || this.parts.skin?.skinColor == Skin.SUB_PURPLE) { this.parts.skin.opacity = 0.4; this.parts.skin.overlay_opac = 70; }
+        //if(this.parts.skin?.skinColor == Skin.SUB_CYAN || this.parts.skin?.skinColor == Skin.SUB_PURPLE) { this.parts.skin.opacity = 0.4; this.parts.skin.overlay_opac = 70; }
 
         // read
         const extraLeg = await sharp(this.spriteLocation + "extraleg.png").resize(32,32, {kernel: sharp.kernel.nearest}).toBuffer()
@@ -208,12 +211,12 @@ export class Render {
         // read end
 
         // array body
-        const extra: CompositeInfo = { buffer: await ChangeColorGetBuffer(extraLeg, this.parts.skin?.skinColor, this.parts.skin?.overlay_opac, this.parts.skin?.opacity), x: this.w_h * 0.5 + 24, y: this.w_h * 0.5 - 16, tile: 0};
-        const l_arm: CompositeInfo = { buffer: await ChangeColorGetBuffer(arm, this.parts.skin?.skinColor, this.parts.skin?.overlay_opac, this.parts.skin?.opacity), x: this.w_h * 0.5 + 4, y: this.w_h * 0.5 - 20, tile: 6}
-        const r_arm: CompositeInfo = { buffer: await ChangeColorGetBuffer(arm, this.parts.skin?.skinColor, this.parts.skin?.overlay_opac, this.parts.skin?.opacity), x: this.w_h * 0.5 + 4, y: this.w_h * 0.5 + 10, tile: -1}
-        const body: CompositeInfo = { buffer: await ChangeColorGetBuffer(r_body, this.parts.skin?.skinColor, this.parts.skin?.overlay_opac, this.parts.skin?.opacity), x: this.w_h * 0.5 - 32, y: this.w_h * 0.5 - 32, tile: 0 }
-        const ren_r_f: CompositeInfo = { buffer: this.parts.feet != 0 ? r_feet : await ChangeColorGetBuffer(r_feet, this.parts.skin?.skinColor, this.parts.skin?.overlay_opac, this.parts.skin?.opacity), x: this.w_h * 0.5 - 32, y: this.w_h * 0.5 - 32, tile: 0}
-        const ren_l_f: CompositeInfo = { buffer: this.parts.feet != 0 ? l_feet : await ChangeColorGetBuffer(l_feet, this.parts.skin?.skinColor, this.parts.skin?.overlay_opac, this.parts.skin?.opacity), x: this.w_h * 0.5 - 32, y: this.w_h * 0.5 - 32, tile: 0 }
+        const extra: CompositeInfo = { buffer: await tint(extraLeg, { r: this.parts.skin!.skinColor.r, g: this.parts.skin!.skinColor.g, b: this.parts.skin!.skinColor.b}), x: this.w_h * 0.5 + 24, y: this.w_h * 0.5 - 16, tile: 0};
+        const l_arm: CompositeInfo = { buffer: await tint(arm, { r: this.parts.skin!.skinColor.r, g: this.parts.skin!.skinColor.g, b: this.parts.skin!.skinColor.b}), x: this.w_h * 0.5 + 4, y: this.w_h * 0.5 - 20, tile: 6}
+        const r_arm: CompositeInfo = { buffer: await tint(arm, { r: this.parts.skin!.skinColor.r, g: this.parts.skin!.skinColor.g, b: this.parts.skin!.skinColor.b}), x: this.w_h * 0.5 + 4, y: this.w_h * 0.5 + 10, tile: -1}
+        const body: CompositeInfo = { buffer: await tint(r_body, { r: this.parts.skin!.skinColor.r, g: this.parts.skin!.skinColor.g, b: this.parts.skin!.skinColor.b}), x: this.w_h * 0.5 - 32, y: this.w_h * 0.5 - 32, tile: 0 }
+        const ren_r_f: CompositeInfo = { buffer: this.parts.feet != 0 ? r_feet : await tint(r_feet, { r: this.parts.skin!.skinColor.r, g: this.parts.skin!.skinColor.g, b: this.parts.skin!.skinColor.b}), x: this.w_h * 0.5 - 32, y: this.w_h * 0.5 - 32, tile: 0}
+        const ren_l_f: CompositeInfo = { buffer: this.parts.feet != 0 ? l_feet : await tint(l_feet, { r: this.parts.skin!.skinColor.r, g: this.parts.skin!.skinColor.g, b: this.parts.skin!.skinColor.b}), x: this.w_h * 0.5 - 32, y: this.w_h * 0.5 - 32, tile: 0 }
         
         arr.push(extra, l_arm, r_arm, body, ren_l_f, ren_r_f)
         arr.push(await this.renderExpression())
