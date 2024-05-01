@@ -24,27 +24,31 @@ export enum Face {
 }
 
 export interface BodyParts {
-    skin: {
-        skinColor: Color;
+    skin?: {
+        skinColor?: Color;
         //opacity?: number; 
         //overlay_opac?: number; 
     }
-    feet: number;
-    shirt: number;
-    hand: number;
-    neck: number;
-    pant: number;
-    hat: number;
-    back: number;
-    hair: {
-        hair: number;
+    feet?: number;
+    shirt?: number;
+    hand?: number;
+    neck?: number;
+    pant?: number;
+    hat?: number;
+    back?: number;
+    hair?: {
+        hair?: number;
         dye?: Color; 
     }
-    face: {
+    face?: {
         face?: number;
-        expression: Face,
+        expression?: Face,
         eyeLens?: Color; 
         eyeDrop?: Color; 
+    }
+    options?: {
+        d_horn?: DHorn;
+        rift_c?: { color: Color, collar?: boolean, auraType?: number }
     }
 }
 
@@ -72,4 +76,20 @@ export const Skin = {
     TONE16: { r: 177, g: 203, b: 239 },
     TONE17: { r: 255, g: 148, b: 11 },
     TONE18: { r: 233, g: 71, b: 86 }
+}
+
+export enum clothingType {
+    HAT, SHIRT,
+    PANT, FEET, FACE,
+    HAND, BACK, HAIR, NECK
+}
+
+//////////////////////////////// Options
+
+export enum DHorn {
+    UNICORN, GOAT, DEVIL
+}
+
+export enum RiftCape {
+    PORTAL, STARFIELD, ELECTRICAL
 }

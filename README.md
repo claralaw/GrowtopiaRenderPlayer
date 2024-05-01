@@ -28,6 +28,19 @@ To convert .rttex files to .png you can use
 
 <br>
 
+## Item Scanner
+You can get player set with (View worn clothes) dialog screenshot
+
+![img](https://github.com/FakeLeq/GrowtopiaRenderPlayer/blob/main/img/scan.png?raw=true)
+
+> Example Usage
+```javascript
+const scan = new Scanner("image.png", ItemData);
+                        // image, buffer or link
+
+const get = await scan.getItems(); // returns BodyPart object
+```
+
 ## Custom items
 We are supporting custom items, you can use your own items for your character.
 
@@ -40,9 +53,9 @@ How to use custom items?:
 {
     "items": [
         {
-            "id": -1, // go minus to prevent normal items
-            "name": "Purple Bubble Wings",
-            "texture": "../../your_image.png", // your custom item image location
+            "item_id": -1, // go minus to prevent normal items
+            "item_name": "Purple Bubble Wings",
+            "item_texture": "../../your_image.png", // your custom item image location
             "textureX": 0, //image x
             "textureY": 0 // image y
         }
@@ -51,7 +64,7 @@ How to use custom items?:
 ```
 
 ```javascript
-ItemData.items.meta = await new ItemsDat(readFileSync("./Assets/items.dat"), readFileSync("citem.json")).decode();
+const ItemData = await new ItemsDat(readFileSync("./Assets/items.dat"), readFileSync("citem.json")).parse();
                                                                                // citem.json location
 ```
 
@@ -70,14 +83,8 @@ ItemData.items.meta = await new ItemsDat(readFileSync("./Assets/items.dat"), rea
 const { writeFileSync, readFileSync } = require("fs");
 const { Render, ItemsDat, Types } = require("growtopia-tools");
 
-const ItemData = {
-    items: {
-        meta: {}
-    },
-};
-
 (async() => {
-    ItemData.items.meta = await new ItemsDat(readFileSync("./Assets/items.dat")).decode();
+    const ItemData = await new ItemsDat(readFileSync("./Assets/items.dat")).decode();
                                                         // items.dat location
 
     const lens = await colorWithDyes("BLUE/BLUE/BLUE/BLUE/GREEN/GREEN/GREEN/GREEN/BLUE/BLUE/GREEN");
@@ -88,7 +95,7 @@ const ItemData = {
     // You can use SHAMPOO as lens/eyedrop cleaner
 
     const renderPlayer = new Render({
-        hat: 234,
+        hat: 4746,
         skin: {
             skinColor: { r: 65, g: 138, b: 42 }, // or Types.Skin.TONE4
         },
@@ -101,7 +108,10 @@ const ItemData = {
             eyeLens: { r: lens.r, g: lens.g, b: lens.b }, // or custom rgb
             eyeDrop: { r: 137, g: 86, b: 154 } // or colorWithDyes() function
         },
-    }, "Assets/sprites/", ItemData.items.meta, 128)
+        option: {
+            d_horn: Types.DHorn.GOAT
+        }
+    }, "Assets/sprites/", ItemData, 128)
        //sprites location  //item data         // width_heigh
 
     const output = await renderPlayer.renderPlayer() // returns buffer
@@ -119,5 +129,4 @@ If you help me about it i would be happy.
 
 ## Credits
 
-- [Syn9673](https://github.com/Syn9673)
-- Growtopia with assets
+- Ubisoft / Growtopia with in-game assets

@@ -5,8 +5,12 @@
 // te encanta la musica te toca toca toca
 
 import sharp from "sharp";
-import { Color } from "../Render/types/Types";
+import { Color } from "../types/Types";
 
+/**
+ * 
+ * @private
+ */
 export function shadeColor(color: Color, amount: number) { // negative darker, positive lighter
     let r = Math.max(Math.min(255, color.r + amount), 0),
     g = Math.max(Math.min(255, color.g + amount), 0),
@@ -14,6 +18,13 @@ export function shadeColor(color: Color, amount: number) { // negative darker, p
   
     return {r: r, g: g, b: b}
 }
+
+/**
+ * 
+ * @param dyeStr dye colors with slash
+ * @example "BLUE/BLUE/RED/BLUE/GREEN/SHAMPOO/RED/BLACK"
+ * @returns 
+ */
 
 export async function colorWithDyes(dyeStr: string) {
     const dyes = dyeStr.split("/").map((x: string) => { return x.toUpperCase() })
@@ -39,12 +50,15 @@ export async function colorWithDyes(dyeStr: string) {
             } break;
            
         }
-         console.log(r, g, b)
     }
 
     return{r: r, g: g, b: b};
 }
 
+/**
+ * 
+ * @private
+ */
 export async function tint(image: Buffer | string, color: Color): Promise<Buffer> {
     let r = color.r / 255, g = color.g / 255, b = color.b / 255;
 

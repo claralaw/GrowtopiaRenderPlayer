@@ -1,6 +1,6 @@
 {
   "name": "growtopia-tools",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "Growtopia Tools for rendering player as buffer",
   "main": "dist/index.js",
   "scripts": {
@@ -14,10 +14,12 @@
     "type": "git",
     "url": "git+https://github.com/FakeLeq/GrowtopiaRenderPlayer.git"
   },
+  "types": "src/types/render.d.ts",
   "author": "Leqend",
   "license": "MIT",
   "dependencies": {
-    "sharp": "^0.33.3"
+    "sharp": "^0.33.3",
+    "tesseract.js": "^5.0.5"
   },
   "devDependencies": {
     "@types/node": "^20.11.30",

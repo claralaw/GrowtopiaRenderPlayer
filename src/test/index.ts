@@ -1,45 +1,30 @@
 import { readFileSync, writeFileSync } from "fs";
-import { Face, Skin } from "../Render/types/Types";
-import { ItemsDatMeta } from "../Utils/ItemsDat/Types";
+import { DHorn, Face, Skin } from "../types/Types";
 import { ItemsDat, Render } from "..";
 import { colorWithDyes } from "../Utils/Recolor";
-
-const ItemData = {
-    items: {
-        meta: {} as ItemsDatMeta,
-    },
-};
-
+import { createWorker } from "tesseract.js";
+import { Scanner } from "../Render/scan";
 
 (async() => {
-    ItemData.items.meta = await new ItemsDat(readFileSync("./Assets/items.dat")).decode();
+
+
+    const ItemData = await new ItemsDat(readFileSync("./Assets/items.dat")).parse();
+
+    /*const scan = new Scanner("image.png", ItemData);
+    const get = await scan.getItems();*/
+
     const lens = await colorWithDyes("BLUE/BLUE/BLUE/BLUE/GREEN/GREEN/GREEN/GREEN/BLUE/BLUE/GREEN");
-    const drop = await colorWithDyes("RED/RED/RED/RED/RED/RED/BLULE/BLUE/BLUE/BLUE")
-    const hair = await colorWithDyes("BLUE/BLUE/BLUE/BLUE/BLUE/BLUE/BLUE/BLUE/BLUE/BLUE/BLUE/BLUE/BLUE/BLUE/BLUE")
+    const hair = await colorWithDyes("BLUE/BLUE/BLUE/BLUE/BLUE/BLUE/BLUE/BLUE/BLUE/BLUE/BLUE/BLUE/BLUE/BLUE/BLUE");
 
-    console.time("Render");
-    const renderPlayer = new Render({
-        back: 8024,
-        hand: 1438,
-        hat: 4820,
-        shirt: 3370,
-        neck: 3372,
-        feet: 496,
-        pant: 370,
-        hair: {
-           hair: 270,
-           dye: { r: hair.r, g: hair.g, b: hair.b }
-        },
-        face: {
-            expression: Face.DEFAULT,
-           
-        },
-        skin: {
-            skinColor: Skin.TONE14,
-        }
-    }, "./Assets/sprites/", ItemData.items.meta, 128);
+    // Dyes (RED, GREEN, BLUE, BLACK, SHAMPOO)
+    // You can use dyes for hair, lens, eyedrops
+    // You can use SHAMPOO as lens/eyedrop cleaner
 
-    const a = (await renderPlayer.renderPlayer())
-    console.timeEnd("Render")
-    writeFileSync("render1.png", a)
+    console.time("Render")
+    const renderPlayer = new Render({hat: 4746, options: {d_horn: DHorn.GOAT}}, "Assets/sprites/", ItemData, 128)
+       //sprites location  //item data         // width_heigh
+
+    const output = await renderPlayer.renderPlayer() // returns buffer
+    writeFileSync("player.png", output);
+    console.timeEnd("Render");
 })()
