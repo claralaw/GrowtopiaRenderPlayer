@@ -84,7 +84,7 @@ const { writeFileSync, readFileSync } = require("fs");
 const { Render, ItemsDat, Types } = require("growtopia-tools");
 
 (async() => {
-    const ItemData = await new ItemsDat(readFileSync("./Assets/items.dat")).decode();
+    const ItemData = await new ItemsDat(readFileSync("./Assets/items.dat")).parse();
                                                         // items.dat location
 
     const lens = await colorWithDyes("BLUE/BLUE/BLUE/BLUE/GREEN/GREEN/GREEN/GREEN/BLUE/BLUE/GREEN");
