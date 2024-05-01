@@ -2,7 +2,6 @@ import sharp from "sharp";
 import { createWorker } from "tesseract.js";
 import { ItemData } from "../Utils/ItemsDat";
 import { BodyParts, clothingType } from "../types/Types";
-import { writeFileSync } from "fs";
 
 export class Scanner {
     private base?: Buffer;
@@ -45,8 +44,6 @@ export class Scanner {
             return await sharp(data, {raw: { width: info.width, height: info.height, channels: 4 }}).withMetadata({density: 70}).png().toBuffer(); //TODO
         })
 
-        writeFileSync("out.png", buf);
-    
         return this.base = buf;
     }
 
